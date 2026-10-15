@@ -1,4 +1,4 @@
-rootProject.name = "Tabotaboui"
+rootProject.name = "tabotabo-ui"
 
 pluginManagement {
     repositories {
