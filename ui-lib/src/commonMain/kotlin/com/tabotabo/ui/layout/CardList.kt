@@ -6,13 +6,10 @@ import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
@@ -30,42 +27,26 @@ internal fun gridColumnCount(width: Dp, minCellWidth: Dp, gap: Dp): Int {
 
 /**
  * Card list that adapts to the enclosing [ScreenScaffold] (via [LocalScreenLayoutInfo]):
- * - portrait: a vertical lazy column;
- * - landscape: horizontally scrolling columns of [cardsPerColumn] cards, also vertically
- *   scrollable for short screens;
+ * - portrait and landscape: a vertically scrolling lazy column, so in landscape the content pane
+ *   scrolls on its own, independently of the header/actions pane;
  * - web layout: an `auto-fill`-style grid whose cells are at least [minCellWidth] wide. It is not
  *   lazy, so it can live inside the web layout's scrolling column.
  *
- * @param key Stable key per item for lazy layouts; the landscape columns use their first item's key.
+ * @param key Stable key per item for the lazy column.
  */
 @Composable
 public fun <T> CardList(
     items: List<T>,
     modifier: Modifier = Modifier,
     key: ((T) -> Any)? = null,
-    cardsPerColumn: Int = 3,
     minCellWidth: Dp = 280.dp,
     itemContent: @Composable (T) -> Unit,
 ) {
-    require(cardsPerColumn > 0) { "cardsPerColumn must be positive, was $cardsPerColumn" }
     val gap = TabotaboTheme.dimensions.spacing.m
-    val info = LocalScreenLayoutInfo.current
-    when {
-        info.isWebLayout -> WebGrid(items, modifier, minCellWidth, gap, itemContent)
-        info.isLandscape -> {
-            val columns = items.chunked(cardsPerColumn)
-            LazyRow(
-                modifier = modifier.verticalScroll(rememberScrollState()),
-                horizontalArrangement = Arrangement.spacedBy(gap),
-            ) {
-                items(columns, key = key?.let { itemKey -> { column -> itemKey(column.first()) } }) { column ->
-                    Column(modifier = Modifier.width(minCellWidth), verticalArrangement = Arrangement.spacedBy(gap)) {
-                        column.forEach { itemContent(it) }
-                    }
-                }
-            }
-        }
-        else -> LazyColumn(modifier = modifier, verticalArrangement = Arrangement.spacedBy(gap)) {
+    if (LocalScreenLayoutInfo.current.isWebLayout) {
+        WebGrid(items, modifier, minCellWidth, gap, itemContent)
+    } else {
+        LazyColumn(modifier = modifier.fillMaxSize(), verticalArrangement = Arrangement.spacedBy(gap)) {
             items(items, key = key) { itemContent(it) }
         }
     }
