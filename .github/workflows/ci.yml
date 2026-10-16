@@ -31,7 +31,7 @@ jobs:
           ./gradlew -q
           :tabotabo-ui:compileAndroidMain :tabotabo-ui:compileKotlinJs :tabotabo-ui:compileKotlinWasmJs
           :shared:compileKotlinJvm :shared:compileAndroidMain :shared:compileKotlinWasmJs
-          :androidApp:compileDebugKotlin :desktopApp:compileKotlin :webApp:compileKotlinWasmJs
+          :androidApp:compileDebugKotlin :desktopApp:compileKotlin :webApp:compileKotlinWasmJs :website:compileKotlinWasmJs
       - name: Upload test reports
         if: failure()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4

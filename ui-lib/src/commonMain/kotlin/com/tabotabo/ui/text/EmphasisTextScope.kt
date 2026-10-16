@@ -30,7 +30,7 @@ public interface EmphasisTextScope {
 
     /**
      * Appends a localised format string whose single `%s` placeholder becomes [focused] in the
-     * focused style; the rest stays unfocused. Example: `Formatted("Set up the %s", "match")`.
+     * focused style; the rest stays unfocused. Example: `Formatted("Plan the %s", "trip")`.
      *
      * @throws IllegalArgumentException when [format] has no `%s` or more than one.
      */

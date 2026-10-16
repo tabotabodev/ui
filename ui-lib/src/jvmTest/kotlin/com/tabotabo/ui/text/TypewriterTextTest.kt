@@ -59,13 +59,13 @@ class TypewriterTextTest {
         setContent {
             TestTheme {
                 TypewriterText(state = rememberTypewriterState(charDelay = CharDelay)) {
-                    UnfocusedText("Set up the")
-                    FocusedText("match")
+                    UnfocusedText("Plan the")
+                    FocusedText("trip")
                 }
             }
         }
         mainClock.advanceTimeBy(150)
-        onNodeWithText("Set up the match").assertExists()
+        onNodeWithText("Plan the trip").assertExists()
     }
 
     @Test

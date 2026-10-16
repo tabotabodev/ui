@@ -300,15 +300,19 @@ private fun RowScope.ButtonLabel(
 
 /**
  * Stacks buttons vertically, each full width within the stack, with the theme's medium spacing
- * between them, centred. [maxWidth] caps the width on wide / web layouts (skill: ~480dp).
+ * between them. [maxWidth] caps the width on wide / web layouts (skill: ~480dp).
+ *
+ * @param alignment Where a width-capped stack sits in the available width: centred by default,
+ *   or e.g. [Alignment.Start] to line up with left-aligned content such as an article.
  */
 @Composable
 public fun ActionStack(
     modifier: Modifier = Modifier,
     maxWidth: Dp = Dp.Unspecified,
+    alignment: Alignment.Horizontal = Alignment.CenterHorizontally,
     content: @Composable ColumnScope.() -> Unit,
 ) {
-    Box(modifier = modifier.fillMaxWidth(), contentAlignment = Alignment.TopCenter) {
+    Column(modifier = modifier.fillMaxWidth(), horizontalAlignment = alignment) {
         Column(
             modifier = Modifier
                 .then(if (maxWidth != Dp.Unspecified) Modifier.widthIn(max = maxWidth) else Modifier)

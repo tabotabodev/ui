@@ -42,7 +42,7 @@ import com.tabotabo.ui.theme.TabotaboTheme
 import com.tabotabo.ui.typography.heroTitle
 
 /** The cards the showcase lists, one per family of components. */
-private enum class ShowcaseItem { Highlight, Choices, Counter, Players, Working }
+private enum class ShowcaseItem { Highlight, Choices, Counter, DistinctColors, Working }
 
 /** Every this-many taps, the counter card celebrates. */
 private const val CELEBRATE_EVERY = 5
@@ -81,7 +81,7 @@ internal fun ShowcaseScreen(webLayout: Boolean, onOpenSettings: () -> Unit) {
                 ShowcaseItem.Highlight -> HighlightCard()
                 ShowcaseItem.Choices -> ChoicesCard()
                 ShowcaseItem.Counter -> CounterCard()
-                ShowcaseItem.Players -> PlayersCard()
+                ShowcaseItem.DistinctColors -> DistinctColorsCard()
                 ShowcaseItem.Working -> WorkingCard()
             }
         }
@@ -154,14 +154,14 @@ private fun CounterCard() {
 
 /** Distinct golden-angle colors for things that must be told apart. */
 @Composable
-private fun PlayersCard() {
+private fun DistinctColorsCard() {
     val colors = TabotaboTheme.colors
     GlowCard(modifier = Modifier.fillMaxWidth()) {
-        CardHeading(title = "Distinct colors", description = "Players and series step around the wheel.")
+        CardHeading(title = "Distinct colors", description = "People and series step around the wheel.")
         Spacer(Modifier.height(TabotaboTheme.dimensions.spacing.m))
         Row(horizontalArrangement = Arrangement.spacedBy(TabotaboTheme.dimensions.spacing.s)) {
-            repeat(4) { index ->
-                Tag(text = "P${index + 1}", color = colors.distinct(index))
+            listOf("Ana", "Ben", "Cleo", "Dev").forEachIndexed { index, name ->
+                Tag(text = name, color = colors.distinct(index))
             }
         }
     }

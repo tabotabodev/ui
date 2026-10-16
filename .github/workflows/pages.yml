@@ -1,8 +1,10 @@
-name: Deploy showcase to GitHub Pages
+name: Deploy website to GitHub Pages
 
 # Publishes, from the latest main:
-#   https://tabotabodev.github.io/ui/      the Wasm build of the showcase app
-#   https://tabotabodev.github.io/ui/api/  the Dokka API reference
+#   https://tabotabodev.github.io/ui/           the website (a Kotlin/Wasm app built with the library)
+#   https://tabotabodev.github.io/ui/showcase/  the showcase app (Kotlin/Wasm)
+#   https://tabotabodev.github.io/ui/api/       the Dokka API reference
+#   https://tabotabodev.github.io/ui/skill/     the Claude skill (SKILL.md and a zip)
 on:
   push:
     branches: [main]
@@ -28,15 +30,14 @@ jobs:
           distribution: zulu
           java-version: 21
       - uses: gradle/actions/setup-gradle@ed408507eac070d1f99cc633dbcf757c94c7933a # v4
-      - name: Build Wasm showcase and API reference
-        run: ./gradlew :webApp:wasmJsBrowserDistribution :tabotabo-ui:dokkaGeneratePublicationHtml -q
+      - name: Build website, showcase and API reference
+        run: >
+          ./gradlew -q
+          :website:wasmJsBrowserDistribution
+          :webApp:wasmJsBrowserDistribution
+          :tabotabo-ui:dokkaGeneratePublicationHtml
       - name: Assemble site
-        run: |
-          mkdir -p build/site
-          cp -R webApp/build/dist/wasmJs/productionExecutable/. build/site/
-          cp -R ui-lib/build/dokka/html build/site/api
-          # Source maps stay out of the public site.
-          find build/site -name '*.map' -delete
+        run: scripts/assemble-site.sh build/site
       - uses: actions/configure-pages@983d7736d9b0ae728b81ab479565c72886d7745b # v5
       - uses: actions/upload-pages-artifact@56afc609e74202658d3ffba0e8f6dda462b719fa # v3
         with:

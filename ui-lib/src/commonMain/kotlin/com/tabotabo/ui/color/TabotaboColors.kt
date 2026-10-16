@@ -35,7 +35,7 @@ public data class TabotaboColors(
     val disabled: Color,
 ) {
     /**
-     * Returns a color for the [index]-th item that must be told apart from the others (players,
+     * Returns a color for the [index]-th item that must be told apart from the others (people,
      * chart series, tags). The hue steps by the golden angle (137.5°) from [primary], uses the
      * primary's tone, and gets the same contrast nudging. Index 0 is [primary].
      */

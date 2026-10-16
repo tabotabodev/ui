@@ -1,8 +1,10 @@
+<img src="branding/icon.png" alt="Tabotabo UI mascot" width="96" align="right">
+
 # Tabotabo UI
 
 A Compose Multiplatform design system: one random hue per session, Montserrat type with bold-in-primary key phrases, outlined cards that glow when highlighted, and typewriter headlines.
 
-**[Live demo](https://tabotabodev.github.io/ui/)**: the showcase app, built with Kotlin/Wasm. **[API reference](https://tabotabodev.github.io/ui/api/)**: always the latest `main`.
+**[Website](https://tabotabodev.github.io/ui/)** · **[Live showcase](https://tabotabodev.github.io/ui/showcase/)** · **[API reference](https://tabotabodev.github.io/ui/api/)** (always the latest `main`)
 
 Targets **Android, iOS, Desktop (JVM), JS and Wasm**. It works in plain Android (Jetpack Compose) apps too.
 
@@ -117,7 +119,7 @@ All roles come from one hue, and every text role is nudged until it meets WCAG 4
 val colors = tabotaboColors(Hue(210f), isDark = true)
 colors.background; colors.surface; colors.primary; colors.accent; colors.muted; colors.outline; colors.disabled
 
-colors.distinct(index = 2)          // a distinct, readable color for players / series / tags (golden-angle steps)
+colors.distinct(index = 2)          // a distinct, readable color for people / series / tags (golden-angle steps)
 
 hueState.shuffle()                  // "Shuffle colors"
 Hue.random()                        // a random hue
@@ -162,16 +164,16 @@ TypewriterText {              // types in once, letter by letter
 }
 
 EmphasisText {                // the same, without animation
-    UnfocusedText("Who plays")
-    FocusedText("what")
+    UnfocusedText("Where to")
+    FocusedText("next")
     UnfocusedText("?")        // no space is added before punctuation
 }
 
 // Translations: keep the focused phrase separate
-TypewriterText { Formatted(stringResource(Res.string.setup_title), "match") } // "Set up the %s"
+TypewriterText { Formatted(stringResource(Res.string.plan_title), "trip") } // "Plan the %s"
 
 // Spacing control
-EmphasisText { UnfocusedText("Tic-Tac-"); NoSpace(); FocusedText("Toe") }
+EmphasisText { UnfocusedText("Note"); NoSpace(); FocusedText("book") }
 ```
 
 Controlling the reveal:
@@ -196,7 +198,7 @@ Buttons are outlined, with a surface fill. **Primary** uses the primary color fo
 
 ```kotlin
 ActionStack {                                   // full width, stacked, centred
-    PrimaryButton("Start match", onClick = ::start)
+    PrimaryButton("Get started", onClick = ::start)
     SecondaryButton("Settings", onClick = ::openSettings, enabled = canOpen)
 }
 
@@ -219,21 +221,21 @@ GlowCard(highlighted = isSelected, onClick = { select() }) {   // outline turns 
 }
 
 SelectablePillRow(
-    options = listOf("Easy", "Normal", "Hard"),
-    selected = level,
-    onSelect = { level = it },
+    options = listOf("Daily", "Weekly", "Monthly"),
+    selected = period,
+    onSelect = { period = it },
     label = { it },
 )
 
-Tag("CPU")                                         // tiny display-only pill
+Tag("Beta")                                        // tiny display-only pill
 Modifier.glowOutline(color, 2.dp, shape, glowRadius = 16.dp)
 
 TabotaboDialog(
     onDismissRequest = { show = false },
     confirmText = "Got it",
     onConfirm = { show = false },
-    title = { UnfocusedText("Match"); FocusedText("over") },
-) { Subtitle("Player 1 wins.") }
+    title = { UnfocusedText("Changes"); FocusedText("saved") },
+) { Subtitle("Your list is up to date.") }
 ```
 
 ### Layout: `layout`
@@ -250,12 +252,12 @@ ScreenScaffold(
     header = {
         ScreenHeader(
             onBack = ::back, backContentDescription = "Back",
-            subtitle = "Pick the board and players.",
-        ) { UnfocusedText("Set up the"); FocusedText("match") }
+            subtitle = "Pick a destination and dates.",
+        ) { UnfocusedText("Plan the"); FocusedText("trip") }
     },
-    actions = { PrimaryButton("Start", onClick = ::start) },
+    actions = { PrimaryButton("Continue", onClick = ::next) },
 ) {
-    CardList(items = boards, key = { it.id }) { board -> BoardCard(board) } // scrolling column; a grid on web
+    CardList(items = destinations, key = { it.id }) { place -> DestinationCard(place) } // scrolling column; a grid on web
 }
 ```
 
@@ -264,9 +266,9 @@ ScreenScaffold(
 ### Motion: `motion`
 
 ```kotlin
-PopInContent(targetState = score) { Text("$it") }   // fade + scale-in when the value changes
+PopInContent(targetState = count) { Text("$it") }   // fade + scale-in when the value changes
 Text("Thinking…", Modifier.pulse(active = isThinking))
-Box(Modifier.celebrate(trigger = winCount))           // bouncy scale-up when the trigger changes
+Box(Modifier.celebrate(trigger = milestone))          // bouncy scale-up when the trigger changes
 
 TabotaboTheme(darkTheme = dark, motion = TabotaboMotion.Reduced) { … } // honour reduce-motion
 ```
@@ -321,11 +323,14 @@ On other platforms, pass `systemBars = null` or set a web `<meta name="theme-col
 |---|---|
 | `ui-lib` (Gradle project `:tabotabo-ui`) | The published library |
 | `shared` | Showcase app UI consuming the library |
+| `website` | The project website, a Kotlin/Wasm app built with the library |
+| `skill/tabotabo-ui` | The Claude skill, published at `/ui/skill/` |
 | `androidApp`, `desktopApp`, `webApp`, `iosApp` | Platform entry points for the showcase |
 
 ```shell
 ./gradlew :desktopApp:run                       # showcase on desktop
 ./gradlew :webApp:wasmJsBrowserDevelopmentRun   # showcase in the browser
+./gradlew :website:wasmJsBrowserDevelopmentRun  # website in the browser
 ./gradlew :androidApp:assembleDebug             # showcase on Android
 ./gradlew :tabotabo-ui:jvmTest -q               # library tests (common + Compose UI tests)
 ```

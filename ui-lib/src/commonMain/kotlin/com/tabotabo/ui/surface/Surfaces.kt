@@ -179,7 +179,7 @@ public fun <T> SelectablePillRow(
     }
 }
 
-/** Tiny display-only outlined tag ("CPU", "New") with a bold footnote label. Not clickable. */
+/** Tiny display-only outlined tag ("Beta", "New") with a bold footnote label. Not clickable. */
 @Composable
 public fun Tag(
     text: String,

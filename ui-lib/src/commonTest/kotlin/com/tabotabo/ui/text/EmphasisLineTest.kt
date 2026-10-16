@@ -32,21 +32,21 @@ class EmphasisLineTest {
     @Test
     fun punctuationGetsNoSpaceBeforeIt() {
         val line = buildEmphasisLine {
-            UnfocusedText("Who plays")
-            FocusedText("what")
+            UnfocusedText("Where to")
+            FocusedText("next")
             UnfocusedText("?")
         }
-        assertEquals("Who plays what?", line.text)
+        assertEquals("Where to next?", line.text)
     }
 
     @Test
     fun noSpaceSuppressesTheNextSpace() {
         val line = buildEmphasisLine {
-            UnfocusedText("Tic-Tac-")
+            UnfocusedText("Note")
             NoSpace()
-            FocusedText("Toe")
+            FocusedText("book")
         }
-        assertEquals("Tic-Tac-Toe", line.text)
+        assertEquals("Notebook", line.text)
     }
 
     @Test
@@ -84,9 +84,9 @@ class EmphasisLineTest {
 
     @Test
     fun formattedSplitsAroundThePlaceholder() {
-        val line = buildEmphasisLine { Formatted("Set up the %s now", "match") }
-        assertEquals("Set up the match now", line.text)
-        assertEquals(listOf(FocusedRange(11, 16)), line.focused)
+        val line = buildEmphasisLine { Formatted("Plan the %s now", "trip") }
+        assertEquals("Plan the trip now", line.text)
+        assertEquals(listOf(FocusedRange(9, 13)), line.focused)
     }
 
     @Test
@@ -114,9 +114,9 @@ class EmphasisLineTest {
     @Test
     fun touchingFocusedRangesWithTheSameColorMerge() {
         val line = buildEmphasisLine {
-            FocusedText("Tic")
+            FocusedText("Sun")
             NoSpace()
-            FocusedText("Tac")
+            FocusedText("set")
         }
         assertEquals(listOf(FocusedRange(0, 6)), line.focused)
     }

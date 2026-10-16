@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tabotabo UI · A Compose Multiplatform design system</title>
+    <meta name="description" content="Tabotabo UI is a minimal, editorial design system for Compose Multiplatform: one random hue, Montserrat type, outlined surfaces and quiet motion, on Android, iOS, desktop and the web.">
+    <meta property="og:title" content="Tabotabo UI">
+    <meta property="og:description" content="One look for every app, from a single hue. A design system for Compose Multiplatform.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://tabotabodev.github.io/ui/">
+    <meta property="og:image" content="https://tabotabodev.github.io/ui/icon-512.png">
+    <meta name="theme-color" content="#0b1118">
+    <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="apple-touch-icon" href="apple-touch-icon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;700&display=swap">
+    <style>
+        html, body { width: 100%; height: 100%; margin: 0; padding: 0; overflow: hidden; }
+        body { background: #f4f7fb; color: #172330; font-family: "Montserrat", system-ui, sans-serif; }
+        @media (prefers-color-scheme: dark) { body { background: #0b1118; color: #d6e1ed; } }
+        /* Shown while the Wasm app loads, and indexed by search engines; the app removes it on start. */
+        #fallback { box-sizing: border-box; max-width: 1080px; height: 100%; margin: 0 auto; padding: 48px clamp(20px, 6vw, 96px); overflow: auto; }
+        #fallback h1 { margin: 0; font-size: clamp(2rem, 6vw, 3rem); font-weight: 300; line-height: 1.15; }
+        #fallback h1 b { font-weight: 700; color: #2f80d0; }
+        #fallback p { max-width: 62ch; line-height: 1.6; opacity: 0.8; }
+        #fallback a { color: #2f80d0; font-weight: 700; text-decoration: none; }
+        #fallback .loading { margin-top: 32px; font-size: 0.8rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; opacity: 0.6; animation: pulse 0.7s ease-in-out infinite alternate; }
+        @keyframes pulse { to { opacity: 0.25; } }
+        @media (prefers-reduced-motion: reduce) { #fallback .loading { animation: none; } }
+    </style>
+</head>
+<body>
+    <main id="fallback">
+        <h1>Tabotabo <b>UI</b></h1>
+        <p>One look for every app, from a single hue. Tabotabo UI is a design system for Compose Multiplatform: type, one color and calm spacing carry the design, so apps on Android, iOS, desktop and the web feel like one family.</p>
+        <p>Install it from Maven Central as <code>io.github.tabotabodev:tabotabo-ui</code>, then explore the
+            <a href="showcase/">live showcase</a>, the <a href="api/">API reference</a> and the
+            <a href="https://github.com/tabotabodev/ui">source on GitHub</a>.</p>
+        <noscript><p>This site is a Kotlin/Wasm app and needs JavaScript and a current browser.</p></noscript>
+        <p class="loading">Loading</p>
+    </main>
+    <script type="application/javascript" src="website.js"></script>
+</body>
+</html>
