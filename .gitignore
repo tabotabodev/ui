@@ -17,3 +17,16 @@ captures
 !*.xcworkspace/contents.xcworkspacedata
 **/xcshareddata/WorkspaceSettings.xcsettings
 node_modules/
+
+# Secrets and signing material: never commit (defense in depth; CI reads them from secrets)
+.env
+.env.*
+*.asc
+*.gpg
+*.pgp
+*.key
+*.keystore
+*.jks
+*.p12
+secring.*
+gradle-local.properties
