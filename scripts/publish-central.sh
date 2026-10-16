@@ -56,17 +56,24 @@ echo "==> Zipping bundle"
 (cd "$STAGING" && zip -qr "$BUNDLE" io -x '*maven-metadata*')
 
 TOKEN="$(printf '%s:%s' "$CENTRAL_USERNAME" "$CENTRAL_PASSWORD" | base64 | tr -d '\n')"
+# GitHub only masks secrets verbatim; mask the derived token too in case anything echoes it.
+if [[ -n "${GITHUB_ACTIONS:-}" ]]; then echo "::add-mask::$TOKEN"; fi
+
+# curl with the auth header read from a file descriptor, so the token never appears in the
+# process list (`ps`) the way a -H argument would.
+central_curl() {
+  curl --fail-with-body -sS -H @<(printf 'Authorization: Bearer %s\n' "$TOKEN") "$@"
+}
 
 echo "==> Uploading ($PUBLISHING_TYPE)"
-DEPLOYMENT_ID="$(curl --fail-with-body -sS -X POST \
+DEPLOYMENT_ID="$(central_curl -X POST \
   "$API/upload?publishingType=$PUBLISHING_TYPE&name=tabotabo-ui-$VERSION" \
-  -H "Authorization: Bearer $TOKEN" \
   -F "bundle=@$BUNDLE")"
 echo "Deployment id: $DEPLOYMENT_ID"
 
 echo "==> Waiting for validation"
 for _ in $(seq 1 60); do
-  STATUS="$(curl --fail-with-body -sS -X POST "$API/status?id=$DEPLOYMENT_ID" -H "Authorization: Bearer $TOKEN")"
+  STATUS="$(central_curl -X POST "$API/status?id=$DEPLOYMENT_ID")"
   STATE="$(printf '%s' "$STATUS" | grep -o '"deploymentState" *: *"[A-Z]*"' | grep -o '[A-Z]\{4,\}' || true)"
   echo "state: ${STATE:-unknown}"
   case "$STATE" in
