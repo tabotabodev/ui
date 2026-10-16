@@ -6,6 +6,7 @@ plugins {
     alias(libs.plugins.androidMultiplatformLibrary)
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
+    alias(libs.plugins.dokka)
     `maven-publish`
     signing
 }
@@ -57,14 +58,28 @@ compose.resources {
     publicResClass = false
     packageOfResClass = "com.tabotabo.ui.resources"
 }
+// API reference: hosted from main on GitHub Pages (/api/) and packed into every javadoc jar.
+dokka {
+    moduleName = "tabotabo-ui"
+    dokkaSourceSets.configureEach {
+        sourceLink {
+            localDirectory = file("src")
+            remoteUrl("https://github.com/tabotabodev/ui/tree/main/ui-lib/src")
+            remoteLineSuffix = "#L"
+        }
+    }
+}
+
 publishing {
     publications.withType<MavenPublication>().configureEach {
-        // Maven Central requires a javadoc jar per publication, and KMP produces none. One jar
-        // per publication keeps each signature's output path unique.
+        // Maven Central requires a javadoc jar per publication; it carries the Dokka HTML
+        // reference (also shown by javadoc.io). One jar per publication keeps each signature's
+        // output path unique.
         val publicationName = name
         val javadocJar = tasks.register<Jar>("${publicationName}JavadocJar") {
             archiveClassifier = "javadoc"
             archiveAppendix = publicationName
+            from(tasks.named("dokkaGeneratePublicationHtml"))
         }
         artifact(javadocJar)
 

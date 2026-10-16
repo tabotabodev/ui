@@ -2,7 +2,7 @@
 
 A Compose Multiplatform design system: one random hue per session, Montserrat type with bold-in-primary key phrases, outlined cards that glow when highlighted, and typewriter headlines.
 
-**[Live demo](https://tabotabodev.github.io/ui/)**: the showcase app, built with Kotlin/Wasm.
+**[Live demo](https://tabotabodev.github.io/ui/)**: the showcase app, built with Kotlin/Wasm. **[API reference](https://tabotabodev.github.io/ui/api/)**: always the latest `main`.
 
 Targets **Android, iOS, Desktop (JVM), JS and Wasm**. It works in plain Android (Jetpack Compose) apps too.
 
