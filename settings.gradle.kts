@@ -35,4 +35,6 @@ include(":androidApp")
 include(":desktopApp")
 include(":shared")
 include(":webApp")
-include(":ui-lib")
+// Published as io.github.tabotabodev:tabotabo-ui; the folder keeps its original name.
+include(":tabotabo-ui")
+project(":tabotabo-ui").projectDir = file("ui-lib")
