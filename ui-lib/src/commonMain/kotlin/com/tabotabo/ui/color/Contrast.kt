@@ -9,7 +9,7 @@ public object ContrastTargets {
     /** Body text, labels and focused text. */
     public const val Text: Double = 4.5
 
-    /** Highlighted borders and large glyphs. */
+    /** Highlighted borders, interactive control borders ([TabotaboColors.outlineStrong]) and large glyphs. */
     public const val Graphics: Double = 3.0
 }
 

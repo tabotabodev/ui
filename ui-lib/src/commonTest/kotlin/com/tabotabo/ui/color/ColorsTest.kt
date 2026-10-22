@@ -1,5 +1,7 @@
 package com.tabotabo.ui.color
 
+import androidx.compose.material3.darkColorScheme
+import androidx.compose.material3.lightColorScheme
 import androidx.compose.ui.graphics.Color
 import kotlin.math.abs
 import kotlin.random.Random
@@ -95,6 +97,29 @@ class TabotaboColorsTest {
     }
 
     @Test
+    fun everyHueKeepsStrongOutlinesVisibleInBothModes() {
+        for (degrees in 0 until 360) {
+            for (isDark in listOf(true, false)) {
+                val colors = tabotaboColors(Hue(degrees.toFloat()), isDark)
+                for (surface in listOf(colors.background, colors.surface)) {
+                    val ratio = contrastRatio(colors.outlineStrong, surface)
+                    assertTrue(ratio >= ContrastTargets.Graphics, "outlineStrong at hue $degrees dark=$isDark: $ratio")
+                }
+            }
+        }
+    }
+
+    @Test
+    fun strongOutlineIsTheOutlineToneMovedAwayFromTheBackground() {
+        val dark = tabotaboColors(Hue(200f), isDark = true)
+        val light = tabotaboColors(Hue(200f), isDark = false)
+        assertEquals(dark.outline.toHsl().saturation, dark.outlineStrong.toHsl().saturation, 0.01f)
+        assertTrue(dark.outlineStrong.toHsl().lightness > dark.outline.toHsl().lightness)
+        assertTrue(light.outlineStrong.toHsl().lightness < light.outline.toHsl().lightness)
+        assertTrue(angleBetween(dark.outlineStrong.toHsl().hue, 200f) < 1f)
+    }
+
+    @Test
     fun darkSchemeSitsOnANearBlackBackground() {
         val colors = tabotaboColors(Hue(120f), isDark = true)
         assertTrue(colors.background.toHsl().lightness < 0.1f)
@@ -183,8 +208,20 @@ class ColorSchemeTest {
         assertEquals(colors.surface, scheme.surfaceContainerHighest)
         assertEquals(colors.accent, scheme.onSurface)
         assertEquals(colors.muted, scheme.onSurfaceVariant)
-        assertEquals(colors.outline, scheme.outline)
+        assertEquals(colors.outlineStrong, scheme.outline)
         assertEquals(colors.outline, scheme.outlineVariant)
+    }
+
+    @Test
+    fun errorRolesStayMaterialDefaults() {
+        for (isDark in listOf(true, false)) {
+            val scheme = tabotaboColors(Hue(140f), isDark).toColorScheme()
+            val material = if (isDark) darkColorScheme() else lightColorScheme()
+            assertEquals(material.error, scheme.error)
+            assertEquals(material.onError, scheme.onError)
+            assertEquals(material.errorContainer, scheme.errorContainer)
+            assertEquals(material.onErrorContainer, scheme.onErrorContainer)
+        }
     }
 
     @Test

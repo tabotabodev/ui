@@ -18,7 +18,10 @@ internal const val GOLDEN_ANGLE: Float = 137.5f
  * @property onPrimary Content drawn on a [primary] fill (rare; buttons are outlined).
  * @property accent Baseline text: near-white / near-black with a hint of the hue.
  * @property muted Subtitles, descriptions, inactive labels.
- * @property outline Card and control borders.
+ * @property outline Soft, decorative borders: cards, dialogs and tags. Not contrast-checked.
+ * @property outlineStrong Borders that identify an interactive control (secondary buttons,
+ *   unselected pills): the [outline] tone nudged to [ContrastTargets.Graphics] (3:1) against
+ *   both [background] and [surface].
  * @property disabled Content and outline of disabled controls.
  */
 @Immutable
@@ -32,6 +35,7 @@ public data class TabotaboColors(
     val accent: Color,
     val muted: Color,
     val outline: Color,
+    val outlineStrong: Color,
     val disabled: Color,
 ) {
     /**
@@ -90,13 +94,15 @@ private const val DISABLED_ALPHA = 0.38f
 /**
  * Builds the full palette for [hue] from the skill's HSL tone table, then nudges every text
  * role's lightness away from the background until it reaches [ContrastTargets.Text] against
- * both background and surface.
+ * both background and surface. [TabotaboColors.outlineStrong] gets the same nudge to
+ * [ContrastTargets.Graphics]; [TabotaboColors.outline] is left as is.
  */
 public fun tabotaboColors(hue: Hue, isDark: Boolean): TabotaboColors {
     val tones = Tones.forMode(isDark)
     val background = tones.background.toColor(hue)
     val surface = tones.surface.toColor(hue)
-    fun readable(tone: Tone) = tone.toColor(hue).ensureContrast(ContrastTargets.Text, listOf(background, surface))
+    fun nudged(tone: Tone, target: Double) = tone.toColor(hue).ensureContrast(target, listOf(background, surface))
+    fun readable(tone: Tone) = nudged(tone, ContrastTargets.Text)
     val muted = readable(tones.muted)
     return TabotaboColors(
         hue = hue,
@@ -108,6 +114,7 @@ public fun tabotaboColors(hue: Hue, isDark: Boolean): TabotaboColors {
         accent = readable(tones.accent),
         muted = muted,
         outline = tones.outline.toColor(hue),
+        outlineStrong = nudged(tones.outline, ContrastTargets.Graphics),
         disabled = muted.copy(alpha = DISABLED_ALPHA),
     )
 }

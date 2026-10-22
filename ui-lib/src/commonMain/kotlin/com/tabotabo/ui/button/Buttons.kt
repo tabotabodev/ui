@@ -126,14 +126,14 @@ public object TabotaboButtonDefaults {
         )
     }
 
-    /** Secondary: `surface` fill, `outline` border, `accent` content; disabled uses `disabled`. */
+    /** Secondary: `surface` fill, `outlineStrong` border, `accent` content; disabled uses `disabled`. */
     @Composable
     public fun secondaryColors(): TabotaboButtonColors {
         val colors = TabotaboTheme.colors
         return TabotaboButtonColors(
             container = colors.surface,
             content = colors.accent,
-            border = colors.outline,
+            border = colors.outlineStrong,
             disabledContainer = colors.surface,
             disabledContent = colors.disabled,
             disabledBorder = colors.disabled,

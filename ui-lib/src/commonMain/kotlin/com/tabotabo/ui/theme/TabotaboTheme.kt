@@ -30,7 +30,8 @@ internal val LocalTabotaboMotion = staticCompositionLocalOf { TabotaboMotion.Def
  * Root of the design system. Builds the [TabotaboColors] for [hueState]'s hue and [darkTheme],
  * and provides colors, typography, dimensions and motion through CompositionLocals. It also
  * installs a restyled [MaterialTheme] underneath, so stock M3 components pick up the scheme (no
- * tonal elevation tint).
+ * tonal elevation tint) and every clickable gets Material's ripple, including its hover, focus
+ * and press feedback. Error colors are Material's own.
  *
  * The library has no notion of a "System" appearance and never reads the OS setting. Consumers
  * resolve the user's choice into [darkTheme], e.g. `darkTheme = choice.isDark ?: isSystemInDarkTheme()`.

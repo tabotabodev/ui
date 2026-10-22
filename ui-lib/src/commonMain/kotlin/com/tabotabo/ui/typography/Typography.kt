@@ -39,7 +39,8 @@ public fun montserratTypography(): Typography = tabotaboTypography(montserratFon
 /**
  * The design system's type scale in any font. Each group can use its own family, so consumers
  * can bring their own fonts. Roles the design system doesn't define keep their Material sizes,
- * re-familied.
+ * re-familied. The large and medium display and headline roles (`displayLarge`, `displayMedium`,
+ * `headlineLarge`, `headlineMedium`) are Light, so emphasis text reads as Light + Bold.
  *
  * @param displayFamily Hero, headline and screen-title roles.
  * @param bodyFamily Body, caption and footnote roles.
@@ -56,14 +57,14 @@ public fun tabotaboTypography(
     fun TextStyle.refamilied(family: FontFamily) = copy(fontFamily = family)
 
     return Typography(
-        displayLarge = material.displayLarge.styled(displayFamily, 42.sp, FontWeight.Normal, 50.sp)
+        displayLarge = material.displayLarge.styled(displayFamily, 42.sp, FontWeight.Light, 50.sp)
             .copy(lineBreak = LineBreak.Heading),
-        displayMedium = material.displayMedium.styled(displayFamily, 34.sp, FontWeight.Normal, 42.sp)
+        displayMedium = material.displayMedium.styled(displayFamily, 34.sp, FontWeight.Light, 42.sp)
             .copy(lineBreak = LineBreak.Heading),
         displaySmall = material.displaySmall.refamilied(displayFamily),
         headlineLarge = material.headlineLarge.styled(displayFamily, 32.sp, FontWeight.Light, 40.sp)
             .copy(lineBreak = LineBreak.Heading),
-        headlineMedium = material.headlineMedium.refamilied(displayFamily),
+        headlineMedium = material.headlineMedium.refamilied(displayFamily).copy(fontWeight = FontWeight.Light),
         headlineSmall = material.headlineSmall.refamilied(displayFamily),
         titleLarge = material.titleLarge.refamilied(displayFamily),
         titleMedium = material.titleMedium.refamilied(bodyFamily),
@@ -77,13 +78,13 @@ public fun tabotaboTypography(
     )
 }
 
-/** Hero title (42sp), backed by `displayLarge`. */
+/** Hero title (42sp Light, balanced line breaks), backed by `displayLarge`. */
 public val Typography.heroTitle: TextStyle get() = displayLarge
 
-/** Headline (34sp, balanced line breaks), backed by `displayMedium`. */
+/** Headline (34sp Light, balanced line breaks), backed by `displayMedium`. */
 public val Typography.headline: TextStyle get() = displayMedium
 
-/** Screen title (32sp), backed by `headlineLarge`. */
+/** Screen title (32sp Light, balanced line breaks), backed by `headlineLarge`. */
 public val Typography.screenTitle: TextStyle get() = headlineLarge
 
 /** Body text (14sp Regular), backed by `bodyMedium`. */
@@ -105,21 +106,21 @@ public val Typography.footnote: TextStyle get() = labelSmall
 public val Typography.factTitle: TextStyle get() = titleSmall
 
 /**
- * Font weights used by emphasis text.
+ * Font weights used by emphasis text. Every hero, headline and title uses Light + Bold by default.
  *
  * @property unfocused Weight of the baseline words.
  * @property focused Weight of the key phrase.
  */
 @Immutable
 public data class EmphasisWeights(
-    val unfocused: FontWeight = FontWeight.Normal,
+    val unfocused: FontWeight = FontWeight.Light,
     val focused: FontWeight = FontWeight.Bold,
 ) {
     public companion object {
-        /** Screen titles: Light + Bold. */
-        public val Title: EmphasisWeights = EmphasisWeights(unfocused = FontWeight.Light)
+        /** Screen and dialog titles: Light + Bold. Same weights as [Headline]. */
+        public val Title: EmphasisWeights = EmphasisWeights()
 
-        /** Headlines (default for emphasis and typewriter text): Regular + Bold. */
+        /** Heroes and headlines (default for emphasis and typewriter text): Light + Bold. */
         public val Headline: EmphasisWeights = EmphasisWeights()
     }
 }

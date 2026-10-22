@@ -89,7 +89,7 @@ class TabotaboThemeTest {
             assertEquals(colors.primary, primary.border)
             assertEquals(colors.primary, primary.content)
             assertEquals(colors.surface, secondary.container)
-            assertEquals(colors.outline, secondary.border)
+            assertEquals(colors.outlineStrong, secondary.border)
             assertEquals(colors.accent, secondary.content)
             for (button in listOf(primary, secondary)) {
                 assertEquals(colors.disabled, button.disabledBorder)

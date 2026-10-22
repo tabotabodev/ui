@@ -113,11 +113,12 @@ Packages live under `com.tabotabo.ui`.
 
 ### Color: `color`
 
-All roles come from one hue, and every text role is nudged until it meets WCAG 4.5:1 contrast against both the background and the surface.
+All roles come from one hue, and every text role is nudged until it meets WCAG 4.5:1 contrast against both the background and the surface. `outline` is a soft, decorative border for cards, dialogs and tags. `outlineStrong` is nudged to 3:1 and borders interactive controls (secondary buttons, unselected pills). The exact formulas are in [docs/design-decisions.md](docs/design-decisions.md).
 
 ```kotlin
 val colors = tabotaboColors(Hue(210f), isDark = true)
-colors.background; colors.surface; colors.primary; colors.accent; colors.muted; colors.outline; colors.disabled
+colors.background; colors.surface; colors.primary; colors.accent; colors.muted
+colors.outline; colors.outlineStrong; colors.disabled
 
 colors.distinct(index = 2)          // a distinct, readable color for people / series / tags (golden-angle steps)
 
@@ -126,6 +127,7 @@ Hue.random()                        // a random hue
 Hue(-30f).degrees                   // 330.0: any angle is normalised
 
 // Material3 ColorSchemes, if you only want the colors
+// (M3 outline = outlineStrong, outlineVariant = outline; error colors stay Material's own)
 tabotaboDarkColorScheme(hue); tabotaboLightColorScheme(hue)
 randomDarkColorScheme(); randomLightColorScheme()  // each picks its own hue
 
@@ -151,11 +153,11 @@ TabotaboTheme(
 ) { … }
 ```
 
-Role accessors on `Typography`: `heroTitle` (42sp), `headline` (34sp), `screenTitle` (32sp), `buttonLabel` (16sp Bold), `body` (14sp), `factTitle` (14sp Medium), `caption` (13sp), `label` (13sp Bold), `footnote` (11sp).
+Role accessors on `Typography`: `heroTitle` (42sp Light), `headline` (34sp Light), `screenTitle` (32sp Light), `buttonLabel` (16sp Bold), `body` (14sp), `factTitle` (14sp Medium), `caption` (13sp), `label` (13sp Bold), `footnote` (11sp). Material's `headlineMedium` is Light too.
 
 ### Emphasis and typewriter text: `text`
 
-A headline is built from segments and renders as a **single text**, so it wraps naturally. Focused phrases are Bold and drawn in the primary color.
+A headline is built from segments and renders as a **single text**, so it wraps naturally. Every hero, headline and title is **Light + Bold**: unfocused words are Light, and focused phrases are Bold and drawn in the primary color.
 
 ```kotlin
 TypewriterText {              // types in once, letter by letter
@@ -190,11 +192,11 @@ state.skip(); state.restart(); state.isFinished
 
 A typed-in text doesn't replay on recomposition or configuration changes. Changing the text types it in again. Typing only redraws the text; it never recomposes or re-measures it.
 
-Ready-made roles: `ScreenTitle { … }` (Light + Bold), `HeroTitle { … }`, `Subtitle("…")`, `Fact(title = "App version", value = "1.2.0")`.
+Ready-made roles: `ScreenTitle { … }`, `HeroTitle { … }` (both Light + Bold), `Subtitle("…")`, `Fact(title = "App version", value = "1.2.0")`.
 
 ### Buttons: `button`
 
-Buttons are outlined, with a surface fill. **Primary** uses the primary color for its border and label. **Secondary** has an outline border and an accent label. Disabled buttons use the `disabled` color.
+Buttons are outlined, with a surface fill. **Primary** uses the primary color for its border and label. **Secondary** has an `outlineStrong` border (3:1 contrast) and an accent label. Disabled buttons use the `disabled` color. Hover, focus and press feedback is Material's ripple.
 
 ```kotlin
 ActionStack {                                   // full width, stacked, centred
@@ -220,7 +222,7 @@ GlowCard(highlighted = isSelected, onClick = { select() }) {   // outline turns 
     Text("Card content")
 }
 
-SelectablePillRow(
+SelectablePillRow(                                  // selected: primary outline; others: outlineStrong
     options = listOf("Daily", "Weekly", "Monthly"),
     selected = period,
     onSelect = { period = it },

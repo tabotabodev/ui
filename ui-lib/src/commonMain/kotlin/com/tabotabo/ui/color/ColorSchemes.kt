@@ -13,6 +13,9 @@ private const val SCRIM_ALPHA = 0.6f
  * Maps the palette onto Material3 roles so stock M3 components follow the scheme. Secondary and
  * tertiary reuse [TabotaboColors.primary] (single hue), every surface container is
  * [TabotaboColors.surface], and `surfaceTint` is transparent so tonal elevation never tints.
+ * M3 `outline` (important boundaries) is [TabotaboColors.outlineStrong] and `outlineVariant`
+ * (decorative) is [TabotaboColors.outline]. The error roles are not overridden: they keep
+ * Material's own light / dark values.
  */
 public fun TabotaboColors.toColorScheme(): ColorScheme {
     val base = if (isDark) darkColorScheme() else lightColorScheme()
@@ -39,11 +42,7 @@ public fun TabotaboColors.toColorScheme(): ColorScheme {
         surfaceTint = Color.Transparent,
         inverseSurface = accent,
         inverseOnSurface = background,
-        error = primary,
-        onError = onPrimary,
-        errorContainer = surface,
-        onErrorContainer = primary,
-        outline = outline,
+        outline = outlineStrong,
         outlineVariant = outline,
         scrim = background.copy(alpha = SCRIM_ALPHA),
         surfaceBright = surface,

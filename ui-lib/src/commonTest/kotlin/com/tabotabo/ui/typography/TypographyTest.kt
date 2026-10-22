@@ -26,8 +26,10 @@ class TypographyTest {
 
     @Test
     fun rolesHaveTheDesignSystemWeights() {
+        assertEquals(FontWeight.Light, typography.heroTitle.fontWeight)
+        assertEquals(FontWeight.Light, typography.headline.fontWeight)
         assertEquals(FontWeight.Light, typography.screenTitle.fontWeight)
-        assertEquals(FontWeight.Normal, typography.headline.fontWeight)
+        assertEquals(FontWeight.Light, typography.headlineMedium.fontWeight)
         assertEquals(FontWeight.Normal, typography.body.fontWeight)
         assertEquals(FontWeight.Medium, typography.factTitle.fontWeight)
         assertEquals(FontWeight.Bold, typography.label.fontWeight)
@@ -64,7 +66,7 @@ class TypographyTest {
 
     @Test
     fun emphasisWeightPresets() {
-        assertEquals(EmphasisWeights(FontWeight.Normal, FontWeight.Bold), EmphasisWeights.Headline)
+        assertEquals(EmphasisWeights(FontWeight.Light, FontWeight.Bold), EmphasisWeights.Headline)
         assertEquals(EmphasisWeights(FontWeight.Light, FontWeight.Bold), EmphasisWeights.Title)
         assertEquals(EmphasisWeights.Headline, EmphasisWeights())
     }

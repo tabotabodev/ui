@@ -107,7 +107,10 @@ internal fun Modifier.glowOutline(color: Color, width: Dp, shape: Shape, glowRad
         .then(if (fill != Color.Unspecified) Modifier.background(fill) else Modifier)
         .border(width, color, shape)
 
-/** One pill in a 2–3 way choice: selected = primary outline and label, no glow. */
+/**
+ * One pill in a 2–3 way choice: selected = primary outline and label, no glow; unselected =
+ * `outlineStrong` outline (3:1, so the control is recognisable) and `muted` label.
+ */
 @Composable
 public fun SelectablePill(
     text: String,
@@ -119,7 +122,7 @@ public fun SelectablePill(
     val colors = TabotaboTheme.colors
     val dimensions = TabotaboTheme.dimensions
     val millis = TabotaboTheme.motion.highlightMillis
-    val outline by animateColorAsState(if (selected) colors.primary else colors.outline, tween(millis), label = "pillOutline")
+    val outline by animateColorAsState(if (selected) colors.primary else colors.outlineStrong, tween(millis), label = "pillOutline")
     val labelColor by animateColorAsState(
         when {
             !enabled -> colors.disabled

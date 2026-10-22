@@ -23,7 +23,7 @@ public fun ScreenTitle(
     EmphasisLineRole(modifier, animate, TabotaboTheme.typography.screenTitle, EmphasisWeights.Title, content)
 }
 
-/** Hero (42sp) emphasis line for landing / splash screens; types in when [animate]. */
+/** Hero (42sp) emphasis line in [EmphasisWeights.Headline] for landing / splash screens; types in when [animate]. */
 @Composable
 public fun HeroTitle(
     modifier: Modifier = Modifier,

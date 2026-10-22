@@ -52,8 +52,8 @@ fun App() {
 ## Design rules (follow them in custom UI too)
 
 1. **Montserrat only.** Weight and color create hierarchy. Use `TabotaboTheme.typography` roles (`heroTitle`, `headline`, `screenTitle`, `body`, `caption`, `label`, `buttonLabel`, `footnote`, `factTitle`); never set a font per element.
-2. **Headlines emphasise a key phrase:** baseline words in Regular (Light for screen titles) and the accent color, the key phrase in Bold and primary. A single-word title is emphasised whole.
-3. **One hue.** Use the color roles: `background`, `surface`, `primary`, `accent` (baseline text), `muted` (subtitles), `outline`, `disabled`. Don't hard-code colors. For things that must be told apart (people, chart series), use `colors.distinct(index)`.
+2. **Headlines emphasise a key phrase:** every hero, headline and title is Light + Bold: baseline words in Light and the accent color, the key phrase in Bold and primary. A single-word title is emphasised whole.
+3. **One hue.** Use the color roles: `background`, `surface`, `primary`, `accent` (baseline text), `muted` (subtitles), `outline` (soft card / dialog / tag borders), `outlineStrong` (3:1 borders of interactive controls), `disabled`. Error colors are Material's own (`MaterialTheme.colorScheme.error`). Don't hard-code colors. For things that must be told apart (people, chart series), use `colors.distinct(index)`.
 4. **Outlined, not elevated.** No resting shadows, gradients, illustrations or decorative icons. Glow is reserved for the one thing that needs attention.
 5. **Left-aligned** text, titles, cards and lists. Center only buttons and a screen's single focal object.
 6. **No layout shifts.** Reserve space for text that changes length (`minLines`) and for things that come and go.

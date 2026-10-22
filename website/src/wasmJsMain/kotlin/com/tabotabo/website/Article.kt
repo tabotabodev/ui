@@ -187,7 +187,7 @@ private fun Principles(hueState: HueState) {
 
         SubSection(title = { UnfocusedText("Emphasis by"); FocusedText("weight and color") }) {
             Paragraph {
-                +"Headlines are mostly regular, with one key phrase in bold and the primary color, like the title of this "
+                +"Headlines are mostly light, with one key phrase in bold and the primary color, like the title of this "
                 +"section. Key phrases stay separate from the sentence around them, so translations can move them while "
                 +"the UI still knows what to emphasise. Headlines that change type themselves in, letter by letter, without "
                 +"ever shifting the layout."
@@ -223,6 +223,7 @@ private fun Swatches(hueState: HueState) {
         "accent" to colors.accent,
         "muted" to colors.muted,
         "outline" to colors.outline,
+        "outline strong" to colors.outlineStrong,
         "distinct 1" to colors.distinct(1),
         "distinct 2" to colors.distinct(2),
     )
