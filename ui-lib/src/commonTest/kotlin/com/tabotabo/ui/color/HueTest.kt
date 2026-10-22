@@ -61,6 +61,21 @@ class HueTest {
 class HueStateTest {
 
     @Test
+    fun hueCanBeSetDirectly() {
+        val state = HueState(Hue(100f))
+        state.hue = Hue(-30f)
+        assertEquals(330f, state.hue.degrees, 0.001f)
+    }
+
+    @Test
+    fun shuffleMovesAwayFromADirectlySetHue() {
+        val state = HueState(Hue(0f))
+        state.hue = Hue(200f)
+        state.shuffle(Random(5), minDistance = 45f)
+        assertTrue(state.hue.distanceTo(Hue(200f)) >= 45f - 0.001f)
+    }
+
+    @Test
     fun shuffleMovesAtLeastTheMinimumDistance() {
         val state = HueState(Hue(100f))
         val random = Random(1)

@@ -44,15 +44,17 @@ internal fun Hue.distanceTo(other: Hue): Float {
 }
 
 /**
- * Holds the session hue and lets the UI re-roll it ("Shuffle colors"). Reading [hue] in
- * composition subscribes to changes.
+ * Holds the session hue. The UI can re-roll it with [shuffle] ("Shuffle colors") or set a specific
+ * one through [hue] (e.g. from a hue slider). Reading [hue] in composition subscribes to changes.
  */
 @Stable
 public class HueState(initial: Hue) {
 
-    /** The current hue. */
+    /**
+     * The current hue. Setting it recolors everything themed from this state; any angle is
+     * accepted, since [Hue] is already normalised to `[0, 360)`.
+     */
     public var hue: Hue by mutableStateOf(initial)
-        private set
 
     /**
      * Replaces [hue] with a random hue at least [minDistance] degrees away from the current one,

@@ -295,7 +295,7 @@ private fun GettingStarted() {
             +"Tabotabo UI is published on Maven Central. Add it to your shared module, or straight to an Android app:"
         }
         Spacer(Modifier.height(TabotaboTheme.dimensions.spacing.m))
-        CodeHint("""implementation("io.github.tabotabodev:tabotabo-ui:0.1.0")""")
+        CodeHint("""implementation("io.github.tabotabodev:tabotabo-ui:0.2.0")""")
         Paragraph {
             +"Then wrap your UI in the theme. Your app decides light or dark; the library picks the colors."
         }

@@ -34,7 +34,7 @@ dependencyResolutionManagement {
 kotlin {
     sourceSets {
         commonMain.dependencies {
-            implementation("io.github.tabotabodev:tabotabo-ui:0.1.0")
+            implementation("io.github.tabotabodev:tabotabo-ui:0.2.0")
         }
     }
 }
@@ -45,7 +45,7 @@ kotlin {
 ```kotlin
 // app/build.gradle.kts
 dependencies {
-    implementation("io.github.tabotabodev:tabotabo-ui:0.1.0")
+    implementation("io.github.tabotabodev:tabotabo-ui:0.2.0")
 }
 ```
 
@@ -55,7 +55,7 @@ Gradle picks the Android variant automatically.
 
 ```toml
 [libraries]
-tabotabo-ui = { module = "io.github.tabotabodev:tabotabo-ui", version = "0.1.0" }
+tabotabo-ui = { module = "io.github.tabotabodev:tabotabo-ui", version = "0.2.0" }
 ```
 
 ### Requirements
@@ -123,6 +123,7 @@ colors.outline; colors.outlineStrong; colors.disabled
 colors.distinct(index = 2)          // a distinct, readable color for people / series / tags (golden-angle steps)
 
 hueState.shuffle()                  // "Shuffle colors"
+hueState.hue = Hue(120f)            // set a specific hue, e.g. from a slider
 Hue.random()                        // a random hue
 Hue(-30f).degrees                   // 330.0: any angle is normalised
 
