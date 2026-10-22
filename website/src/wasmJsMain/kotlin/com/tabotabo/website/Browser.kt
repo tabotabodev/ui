@@ -30,6 +30,30 @@ internal external fun setThemeColorMeta(color: String)
 @JsFun("() => { const fallback = document.getElementById('fallback'); if (fallback) fallback.remove(); }")
 internal external fun removeLoadingFallback()
 
+/** Path of the page's `<base href>` (the site root, e.g. "/ui/"), or "/" when unavailable. */
+@JsFun("() => { try { return new URL(document.baseURI).pathname; } catch (e) { return '/'; } }")
+internal external fun sitePathFromBase(): String
+
+/** Path of the address bar, e.g. "/ui/principles/color/". */
+@JsFun("() => window.location.pathname")
+internal external fun currentPathname(): String
+
+/** Replaces the address bar's URL with [path] without a history entry or a page load. */
+@JsFun("(path) => { try { window.history.replaceState(null, '', path); } catch (e) {} }")
+internal external fun replaceAddress(path: String)
+
+/** Sets the browser tab's title. */
+@JsFun("(title) => { document.title = title; }")
+internal external fun setDocumentTitle(title: String)
+
+/** Sets the page's `<meta name="description">`, which search engines and link previews read. */
+@JsFun("(text) => { const meta = document.querySelector('meta[name=\"description\"]'); if (meta) meta.setAttribute('content', text); }")
+internal external fun setMetaDescription(text: String)
+
+/** The current calendar year, for the footer. */
+@JsFun("() => new Date().getFullYear()")
+internal external fun currentYear(): Int
+
 /** This color as a CSS hex string, ignoring alpha. */
 internal fun Color.toCssHex(): String = "#" + (toArgb() and 0xFFFFFF).toString(16).padStart(6, '0')
 

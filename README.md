@@ -34,7 +34,7 @@ dependencyResolutionManagement {
 kotlin {
     sourceSets {
         commonMain.dependencies {
-            implementation("io.github.tabotabodev:tabotabo-ui:0.2.0")
+            implementation("io.github.tabotabodev:tabotabo-ui:0.2.1")
         }
     }
 }
@@ -45,7 +45,7 @@ kotlin {
 ```kotlin
 // app/build.gradle.kts
 dependencies {
-    implementation("io.github.tabotabodev:tabotabo-ui:0.2.0")
+    implementation("io.github.tabotabodev:tabotabo-ui:0.2.1")
 }
 ```
 
@@ -55,7 +55,7 @@ Gradle picks the Android variant automatically.
 
 ```toml
 [libraries]
-tabotabo-ui = { module = "io.github.tabotabodev:tabotabo-ui", version = "0.2.0" }
+tabotabo-ui = { module = "io.github.tabotabodev:tabotabo-ui", version = "0.2.1" }
 ```
 
 ### Requirements

@@ -17,6 +17,7 @@ kotlin {
     sourceSets {
         wasmJsMain.dependencies {
             implementation(project(":tabotabo-ui"))
+            implementation(libs.navigation.compose)
         }
     }
 }

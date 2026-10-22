@@ -3,6 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Root of the site: "/" in development. For GitHub Pages, scripts/route_pages.py rewrites it
+         to "/ui/" and writes a copy of this file per route, filling in the title, description,
+         link-preview tags and the #fallback text from its route table. -->
+    <base href="/">
     <title>Tabotabo UI · A Compose Multiplatform design system</title>
     <meta name="description" content="Tabotabo UI is a minimal, editorial design system for Compose Multiplatform: one random hue, Montserrat type, outlined surfaces and quiet motion, on Android, iOS, desktop and the web.">
     <meta property="og:title" content="Tabotabo UI">
@@ -13,9 +17,8 @@
     <meta name="theme-color" content="#0b1118">
     <link rel="icon" type="image/png" href="favicon.png">
     <link rel="apple-touch-icon" href="apple-touch-icon.png">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;700&display=swap">
+    <!-- No third-party requests: the app bundles Montserrat itself; this loading text uses Montserrat
+         only if the visitor has it installed, otherwise the system font. -->
     <style>
         html, body { width: 100%; height: 100%; margin: 0; padding: 0; overflow: hidden; }
         body { background: #f4f7fb; color: #172330; font-family: "Montserrat", system-ui, sans-serif; }
@@ -33,8 +36,8 @@
 </head>
 <body>
     <main id="fallback">
-        <h1>Tabotabo <b>UI</b></h1>
-        <p>One look for every app, from a single hue. Tabotabo UI is a design system for Compose Multiplatform: type, one color and calm spacing carry the design, so apps on Android, iOS, desktop and the web feel like one family.</p>
+        <h1 id="fallback-title">Tabotabo <b>UI</b></h1>
+        <p id="fallback-text">One look for every app, from a single hue. Tabotabo UI is a design system for Compose Multiplatform: type, one color and calm spacing carry the design, so apps on Android, iOS, desktop and the web feel like one family.</p>
         <p>Install it from Maven Central as <code>io.github.tabotabodev:tabotabo-ui</code>, then explore the
             <a href="showcase/">live showcase</a>, the <a href="api/">API reference</a> and the
             <a href="https://github.com/tabotabodev/ui">source on GitHub</a>.</p>

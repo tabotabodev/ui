@@ -1,38 +1,46 @@
 package com.tabotabo.website
 
-import androidx.compose.foundation.Canvas
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.text.selection.SelectionContainer
-import androidx.compose.material3.LocalContentColor
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.StrokeCap
-import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.unit.dp
-import com.tabotabo.ui.button.IconAction
+import androidx.navigation.ExperimentalBrowserHistoryApi
+import androidx.navigation.bindToBrowserNavigation
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
 import com.tabotabo.ui.color.HueState
 import com.tabotabo.ui.color.rememberHueState
-import com.tabotabo.ui.layout.ScreenHeader
-import com.tabotabo.ui.layout.ScreenScaffold
 import com.tabotabo.ui.settings.AppearanceSetting
 import com.tabotabo.ui.settings.SettingsSection
 import com.tabotabo.ui.settings.ShuffleColorsButton
 import com.tabotabo.ui.surface.TabotaboDialog
 import com.tabotabo.ui.theme.TabotaboTheme
-import kotlin.math.PI
-import kotlin.math.cos
-import kotlin.math.sin
+import com.tabotabo.website.pages.ComponentsPage
+import com.tabotabo.website.pages.HomePage
+import com.tabotabo.website.pages.NotFoundPage
+import com.tabotabo.website.pages.StartPage
+import com.tabotabo.website.pages.principles.ColorPage
+import com.tabotabo.website.pages.principles.LayoutPage
+import com.tabotabo.website.pages.principles.MotionPage
+import com.tabotabo.website.pages.principles.PrinciplesPage
+import com.tabotabo.website.pages.principles.SurfacesPage
+import com.tabotabo.website.pages.principles.TextPage
 
 /** The viewer's appearance choice; persisted per browser, unlike the hue. */
 internal enum class Appearance(val label: String, val storageValue: String?) {
@@ -43,12 +51,37 @@ internal enum class Appearance(val label: String, val storageValue: String?) {
 
 private const val APPEARANCE_KEY = "tabotabo-appearance"
 
+/** Duration of the fade between pages. */
+private const val PAGE_FADE_MILLIS = 200
+
+/**
+ * Where the visitor landed, read once at start-up.
+ *
+ * @property sitePath Path of the site root, e.g. "/ui/" on GitHub Pages or "/" in development.
+ * @property initialPage The page for the address the visitor opened.
+ * @property initialPath That address relative to [sitePath]; kept as-is for [SitePage.NotFound].
+ */
+private class Landing(val sitePath: String, val initialPage: SitePage, val initialPath: String) {
+    companion object {
+        /** Reads the current address against the page's `<base href>`. */
+        fun read(): Landing {
+            val sitePath = sitePathFromBase().let { if (it.endsWith("/")) it else "$it/" }
+            val pathname = currentPathname()
+            val relative = if (pathname.startsWith(sitePath)) pathname.removePrefix(sitePath) else pathname.trimStart('/')
+            return Landing(sitePath, SitePage.fromPath(relative), relative)
+        }
+    }
+}
+
 /**
  * Website root: a fresh hue on every page load, the viewer's saved appearance, the browser's
- * theme color kept in sync, and the article in the library's single-column web layout.
+ * theme color kept in sync, the phone or wide layout, and one route per page, kept in sync with
+ * the address bar and browser history.
  */
+@OptIn(ExperimentalBrowserHistoryApi::class)
 @Composable
 internal fun WebsiteApp() {
+    val landing = remember { Landing.read() }
     var appearance by remember {
         mutableStateOf(Appearance.entries.firstOrNull { it.storageValue == storageGet(APPEARANCE_KEY) } ?: Appearance.System)
     }
@@ -63,43 +96,85 @@ internal fun WebsiteApp() {
         appearance = it
         storageSet(APPEARANCE_KEY, it.storageValue)
     }
+    val navController = rememberNavController()
+    val previewMode = remember { PreviewModeState() }
 
     LaunchedEffect(Unit) { removeLoadingFallback() }
 
-    TabotaboTheme(darkTheme = darkTheme, hueState = hueState, systemBars = BrowserThemeColor) {
-        ScreenScaffold(
-            webLayout = true,
-            header = {
-                ScreenHeader(
-                    subtitle = "A Compose Multiplatform design system",
-                    animateTitle = false,
-                    actions = {
-                        IconAction(onClick = { settingsOpen = true }, contentDescription = "Settings") { GearIcon() }
-                    },
-                ) {
-                    UnfocusedText("Tabotabo")
-                    FocusedText("UI")
-                }
-            },
+    // The browser binding builds every address as "<address at bind time> + route path", so the
+    // address is reset to the site root first; the binding then restores the landing page's path.
+    LaunchedEffect(navController) {
+        replaceAddress(landing.sitePath)
+        navController.bindToBrowserNavigation { entry ->
+            val page = SitePage.fromRoute(entry.destination.route)
+            if (page == SitePage.NotFound) landing.initialPath else page.path
+        }
+    }
+
+    val currentEntry by navController.currentBackStackEntryAsState()
+    val currentPage = SitePage.fromRoute(currentEntry?.destination?.route ?: landing.initialPage.route)
+    LaunchedEffect(currentPage) {
+        setDocumentTitle(currentPage.documentTitle)
+        setMetaDescription(currentPage.description)
+    }
+
+    BoxWithConstraints(Modifier.fillMaxSize()) {
+        val phone = maxWidth < PhoneMaxWidth
+        TabotaboTheme(
+            darkTheme = darkTheme,
+            hueState = hueState,
+            typography = siteTypography(phone),
+            systemBars = BrowserThemeColor,
         ) {
-            // Lets readers select and copy any text, code samples included.
-            SelectionContainer {
-                Article(
-                    hueState = hueState,
+            CompositionLocalProvider(
+                LocalNavigate provides { page -> navController.navigate(page.route) { launchSingleTop = true } },
+                LocalOpenSettings provides { settingsOpen = true },
+                LocalPhoneLayout provides phone,
+                LocalPreviewMode provides previewMode,
+            ) {
+                NavHost(
+                    navController = navController,
+                    startDestination = landing.initialPage.route,
+                    enterTransition = { fadeIn(tween(PAGE_FADE_MILLIS)) },
+                    exitTransition = { fadeOut(tween(PAGE_FADE_MILLIS)) },
+                ) {
+                    SitePage.entries.forEach { page ->
+                        composable(page.route) { PageContent(page, hueState, appearance, onAppearanceChange) }
+                    }
+                }
+            }
+
+            if (settingsOpen) {
+                SettingsDialog(
                     appearance = appearance,
                     onAppearanceChange = onAppearanceChange,
+                    hueState = hueState,
+                    onClose = { settingsOpen = false },
                 )
             }
         }
+    }
+}
 
-        if (settingsOpen) {
-            SettingsDialog(
-                appearance = appearance,
-                onAppearanceChange = onAppearanceChange,
-                hueState = hueState,
-                onClose = { settingsOpen = false },
-            )
-        }
+/** The body of [page]. */
+@Composable
+private fun PageContent(
+    page: SitePage,
+    hueState: HueState,
+    appearance: Appearance,
+    onAppearanceChange: (Appearance) -> Unit,
+) {
+    when (page) {
+        SitePage.Home -> HomePage()
+        SitePage.Principles -> PrinciplesPage()
+        SitePage.Color -> ColorPage(hueState)
+        SitePage.Text -> TextPage(hueState)
+        SitePage.Surfaces -> SurfacesPage(hueState)
+        SitePage.Layout -> LayoutPage()
+        SitePage.Motion -> MotionPage()
+        SitePage.Components -> ComponentsPage(hueState, appearance, onAppearanceChange)
+        SitePage.Start -> StartPage()
+        SitePage.NotFound -> NotFoundPage()
     }
 }
 
@@ -130,7 +205,7 @@ private fun SettingsDialog(
     }
 }
 
-/** The appearance picker, shared by the settings dialog and the article's settings example. */
+/** The appearance picker, shared by the settings dialog and the Components page's settings example. */
 @Composable
 internal fun AppearanceControl(appearance: Appearance, onAppearanceChange: (Appearance) -> Unit) {
     AppearanceSetting(
@@ -141,21 +216,4 @@ internal fun AppearanceControl(appearance: Appearance, onAppearanceChange: (Appe
         title = "Appearance",
         description = "Pick light or dark, or follow your device.",
     )
-}
-
-/** A settings gear drawn as simple strokes in `LocalContentColor`. */
-@Composable
-private fun GearIcon() {
-    val color = LocalContentColor.current
-    Canvas(modifier = Modifier.size(24.dp)) {
-        val stroke = size.minDimension * 0.11f
-        val center = Offset(size.width / 2, size.height / 2)
-        val ring = size.minDimension * 0.24f
-        drawCircle(color, ring, center, style = Stroke(stroke))
-        repeat(8) { index ->
-            val angle = index * PI / 4
-            val direction = Offset(cos(angle).toFloat(), sin(angle).toFloat())
-            drawLine(color, center + direction * (ring + stroke), center + direction * (size.minDimension / 2 - stroke / 2), stroke, StrokeCap.Round)
-        }
-    }
 }

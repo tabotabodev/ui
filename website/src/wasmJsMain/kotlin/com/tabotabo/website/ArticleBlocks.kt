@@ -36,7 +36,6 @@ import com.tabotabo.ui.text.EmphasisText
 import com.tabotabo.ui.text.EmphasisTextScope
 import com.tabotabo.ui.theme.TabotaboTheme
 import com.tabotabo.ui.typography.EmphasisWeights
-import com.tabotabo.ui.typography.screenTitle
 
 /** Comfortable reading width for article prose. */
 private val ReadingWidth = 680.dp
@@ -48,7 +47,11 @@ private val SideBySideWidth = 760.dp
 private const val API_ROOT = "api/tabotabo-ui/"
 
 /** Collects one paragraph: plain text, bold runs and links, in reading order. */
-internal class ParagraphScope(private val builder: AnnotatedString.Builder, private val linkStyles: TextLinkStyles) {
+internal class ParagraphScope(
+    private val builder: AnnotatedString.Builder,
+    private val linkStyles: TextLinkStyles,
+    private val navigate: (SitePage) -> Unit,
+) {
     /** Appends plain text. */
     operator fun String.unaryPlus() {
         builder.append(this)
@@ -63,6 +66,11 @@ internal class ParagraphScope(private val builder: AnnotatedString.Builder, priv
     fun link(text: String, url: String) {
         builder.withLink(LinkAnnotation.Url(url, linkStyles)) { append(text) }
     }
+
+    /** Appends [text] as a link to another [page] of the site, opened without a page load. */
+    fun link(text: String, page: SitePage) {
+        builder.withLink(LinkAnnotation.Clickable(page.route, linkStyles) { navigate(page) }) { append(text) }
+    }
 }
 
 /** A paragraph of article prose at reading width, with inline bold runs and links. */
@@ -73,34 +81,14 @@ internal fun Paragraph(modifier: Modifier = Modifier, content: ParagraphScope.()
         style = SpanStyle(color = primary, fontWeight = FontWeight.Bold),
         hoveredStyle = SpanStyle(color = primary, fontWeight = FontWeight.Bold, textDecoration = TextDecoration.Underline),
     )
-    val text = buildAnnotatedString { ParagraphScope(this, linkStyles).content() }
+    val navigate = LocalNavigate.current
+    val text = buildAnnotatedString { ParagraphScope(this, linkStyles, navigate).content() }
     Text(
         text = text,
         modifier = modifier.widthIn(max = ReadingWidth).padding(top = TabotaboTheme.dimensions.spacing.m),
         color = TabotaboTheme.colors.accent,
         style = TabotaboTheme.typography.bodyLarge.copy(lineHeight = 26.sp),
     )
-}
-
-/**
- * One section of the article: a divider, a small uppercase [eyebrow], an emphasis [title], then
- * [content].
- */
-@Composable
-internal fun ArticleSection(
-    eyebrow: String,
-    title: EmphasisTextScope.() -> Unit,
-    content: @Composable ColumnScope.() -> Unit,
-) {
-    val spacing = TabotaboTheme.dimensions.spacing
-    Column(Modifier.fillMaxWidth().padding(top = 56.dp)) {
-        Box(Modifier.fillMaxWidth().height(TabotaboTheme.dimensions.outlineWidth).background(TabotaboTheme.colors.outline))
-        Spacer(Modifier.height(40.dp))
-        Eyebrow(eyebrow)
-        Spacer(Modifier.height(spacing.s))
-        EmphasisText(style = TabotaboTheme.typography.screenTitle, weights = EmphasisWeights.Title, content = title)
-        content()
-    }
 }
 
 /** A smaller heading inside a section, followed by its [content]. */
@@ -175,7 +163,7 @@ internal fun Example(
                 }
             }
         }
-        Paragraph { link("$apiLabel →", API_ROOT + apiPath) }
+        Paragraph { link(apiLabel, API_ROOT + apiPath) }
     }
 }
 
@@ -194,5 +182,64 @@ private fun LabeledPanel(label: String, modifier: Modifier = Modifier, content: 
 private fun OutputCard(content: @Composable ColumnScope.() -> Unit) {
     GlowCard(modifier = Modifier.fillMaxWidth()) {
         Column(verticalArrangement = Arrangement.spacedBy(TabotaboTheme.dimensions.spacing.m), content = content)
+    }
+}
+
+/**
+ * A table that never scrolls the page sideways: columns when wide; on a phone each row becomes a
+ * card titled by its first cell, with the other cells as label / value pairs.
+ *
+ * @param headers Column titles; the first names the row titles.
+ * @param rows Cells per row, one per header.
+ * @param weights Relative column widths when wide; equal by default.
+ */
+@Composable
+internal fun SpecTable(
+    headers: List<String>,
+    rows: List<List<String>>,
+    modifier: Modifier = Modifier,
+    weights: List<Float> = headers.map { 1f },
+) {
+    val colors = TabotaboTheme.colors
+    val typography = TabotaboTheme.typography
+    val spacing = TabotaboTheme.dimensions.spacing
+    if (LocalPhoneLayout.current) {
+        Column(modifier.fillMaxWidth().padding(top = spacing.l), verticalArrangement = Arrangement.spacedBy(spacing.s)) {
+            rows.forEach { row ->
+                GlowCard(Modifier.fillMaxWidth()) {
+                    Text(row.first(), color = colors.accent, style = typography.labelLarge)
+                    row.drop(1).forEachIndexed { index, cell ->
+                        Spacer(Modifier.height(spacing.s))
+                        Text(headers[index + 1], color = colors.muted, style = typography.labelMedium)
+                        Text(cell, color = colors.accent, style = typography.bodyMedium)
+                    }
+                }
+            }
+        }
+    } else {
+        val divider = @Composable {
+            Box(Modifier.fillMaxWidth().height(1.dp).background(colors.outline))
+        }
+        Column(modifier.fillMaxWidth().padding(top = spacing.l)) {
+            Row(Modifier.fillMaxWidth().padding(vertical = spacing.s), horizontalArrangement = Arrangement.spacedBy(spacing.l)) {
+                headers.forEachIndexed { index, header ->
+                    Text(header, Modifier.weight(weights[index]), color = colors.muted, style = typography.labelMedium)
+                }
+            }
+            divider()
+            rows.forEach { row ->
+                Row(Modifier.fillMaxWidth().padding(vertical = spacing.m), horizontalArrangement = Arrangement.spacedBy(spacing.l)) {
+                    row.forEachIndexed { index, cell ->
+                        Text(
+                            text = cell,
+                            modifier = Modifier.weight(weights[index]),
+                            color = colors.accent,
+                            style = if (index == 0) typography.labelLarge else typography.bodyMedium,
+                        )
+                    }
+                }
+                divider()
+            }
+        }
     }
 }

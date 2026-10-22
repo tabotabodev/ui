@@ -15,10 +15,10 @@ Tabotabo UI is a minimal, editorial design system for Compose Multiplatform (And
 
 ```kotlin
 // KMP: shared module build.gradle.kts
-kotlin { sourceSets { commonMain.dependencies { implementation("io.github.tabotabodev:tabotabo-ui:0.2.0") } } }
+kotlin { sourceSets { commonMain.dependencies { implementation("io.github.tabotabodev:tabotabo-ui:0.2.1") } } }
 
 // Android only: app/build.gradle.kts
-dependencies { implementation("io.github.tabotabodev:tabotabo-ui:0.2.0") }
+dependencies { implementation("io.github.tabotabodev:tabotabo-ui:0.2.1") }
 ```
 
 The repository needs `mavenCentral()`. Android `minSdk` is 29. Compose runtime, foundation, ui and material3 come in as `api` dependencies, so don't add them again for the library's sake.
