@@ -7,7 +7,7 @@ import com.tabotabo.ui.text.EmphasisTextScope
 internal const val SITE_NAME = "Tabotabo UI"
 
 /** Latest published library version, shown in install snippets. Update after each release. */
-internal const val LIBRARY_VERSION = "0.2.1"
+internal const val LIBRARY_VERSION = "0.2.2"
 
 /** The Gradle line that adds the library. */
 internal const val INSTALL_LINE = """implementation("io.github.tabotabodev:tabotabo-ui:$LIBRARY_VERSION")"""
