@@ -219,7 +219,7 @@ Long labels scroll as a marquee instead of wrapping. Override colors with `Tabot
 ### Surfaces: `surface`
 
 ```kotlin
-GlowCard(highlighted = isSelected, onClick = { select() }) {   // outline turns primary and glows when highlighted
+GlowCard(highlighted = isSelected, onClick = { select() }) {   // outline turns primary and glows when highlighted; glow = false for border only
     Text("Card content")
 }
 

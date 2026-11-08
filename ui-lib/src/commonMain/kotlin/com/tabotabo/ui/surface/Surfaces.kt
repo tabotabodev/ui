@@ -48,9 +48,10 @@ private val PillShape = RoundedCornerShape(percent = 50)
 
 /**
  * Outlined card: the theme's `surface` fill with a thin outline and no resting shadow. When
- * [highlighted], the outline animates to [highlightColor] at the highlight width and, if [glow]
- * is set, a colored shadow fades in. Use glow sparingly, for the one thing that needs attention.
+ * [highlighted], the outline animates to [highlightColor] at the highlight width.
  *
+ * @param glow Colored shadow that fades in while [highlighted]. On by default; pass `false` for a
+ * border-only highlight. Use glow sparingly, for the one thing that needs attention.
  * @param onClick Non-null makes the card clickable (with ripple and button semantics).
  */
 @Composable
@@ -58,7 +59,7 @@ public fun GlowCard(
     modifier: Modifier = Modifier,
     highlighted: Boolean = false,
     highlightColor: Color = TabotaboTheme.colors.primary,
-    glow: Boolean = highlighted,
+    glow: Boolean = true,
     onClick: (() -> Unit)? = null,
     enabled: Boolean = true,
     shape: Shape = RoundedCornerShape(TabotaboTheme.dimensions.cardCorner),
